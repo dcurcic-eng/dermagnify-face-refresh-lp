@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dermagnify Face Refresh - Bring a Friend. Refresh Together.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#083937;
+    --green-2:#0A3F3D;
+    --green-3:#0A4543;
+    --teal:#036564;
+    --gold:#CEA171;
+    --brown:#49281F;
+    --rust:#872300;
+    --beige:#F0EEEB;
+    --cream:#E1DBD5;
+    --gray:#444444;
+    --placeholder:#998C82;
+    --ease:cubic-bezier(0.22,0.61,0.36,1);
+    --t-micro:150ms;
+    --t-base:300ms;
+    --header-h:74px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;}
+  body{
+    font-family:'Roboto',sans-serif;
+    color:#fff;
+    background:linear-gradient(90deg,#083937 0%,#036564 100%);
+    overflow-x:hidden;
+  }
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- shared ---------- */
+  .page{width:100%;margin:0 auto;position:relative}
+  .playfair{font-family:'Playfair Display',serif}
+  .sparkle{flex:0 0 auto}
+  .sparkle path{fill:var(--gold)}
+
+  .eyebrow-row{display:flex;align-items:center;gap:12px}
+  .eyebrow{color:var(--gold);font-size:18px;font-weight:500;letter-spacing:4px;text-transform:uppercase}
+
+  /* ---------- buttons (motion language: 0.3s ease-out inverted fill) ---------- */
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;
+    font-family:'Roboto',sans-serif;font-weight:600;cursor:pointer;border:1px solid transparent;
+    overflow:hidden;isolation:isolate;transition:color var(--t-base) ease-out, border-color var(--t-base) ease-out, box-shadow var(--t-base) ease-out;}
+  .btn span{position:relative;z-index:2}
+  .btn::after{content:"";position:absolute;inset:0;z-index:1;transform:scaleY(0);transform-origin:center top;
+    transition:transform var(--t-base) ease-out;}
+  .btn:hover::after{transform:scaleY(1)}
+
+  /* gold buttons invert to deep green */
+  /* all CTAs settle on dark green with a glowing gold border on hover */
+  .btn-gold{background:var(--gold);color:var(--green);border-color:var(--gold);font-size:16px;padding:16px 28px}
+  .btn-gold::after{background:var(--green)}
+  .btn-gold:hover{color:var(--gold);border-color:var(--gold);box-shadow:0 0 22px rgba(206,161,113,0.55)}
+  .btn-gold.sm{padding:12px 20px}
+
+  /* green button (on light surfaces) inverts to white - unchanged */
+  .btn-green{background:var(--green);color:#fff;border-color:var(--green);font-size:16px;padding:16px 24px;width:100%}
+  .btn-green::after{background:#fff}
+  .btn-green:hover{color:var(--green);border-color:var(--green)}
+
+  /* teal primary (brand header CTA), squared corners - inverts to white */
+  .btn-teal{background:var(--green);color:#fff;border-color:var(--green);border-radius:0;font-size:16px;padding:13px 22px}
+  .btn-teal::after{background:#fff}
+  .btn-teal:hover{color:var(--green);border-color:var(--green)}
+
+  /* ---------- header ---------- */
+  .header{position:fixed;top:0;left:0;right:0;width:100%;z-index:50;display:flex;align-items:center;justify-content:space-between;
+    padding:16px 80px;background:rgba(255,255,255,0.45);border-bottom:1px solid rgba(255,255,255,0.25);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:0 1px 0 rgba(8,57,55,0.04);
+    transition:background var(--t-base) ease,box-shadow var(--t-base) ease,transform var(--t-base) ease;}
+  .header.scrolled{box-shadow:0 4px 18px rgba(8,57,55,0.10)}
+  .logo img{height:42px;width:auto;display:block}
+  .header-right{display:flex;align-items:center;gap:28px}
+  .header-phone{color:var(--green);font-size:16px;font-weight:500;letter-spacing:.5px;transition:opacity var(--t-base) ease-out}
+  .header-phone:hover{opacity:.65}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+  .hero-img,.hero-scrim{position:absolute;inset:0;width:100%;height:100%}
+  .hero-img{object-fit:cover}
+  .hero-scrim{background:linear-gradient(90deg,rgba(8,57,55,0.92) 0%,rgba(8,57,55,0.6) 45%,rgba(3,101,100,0.15) 100%)}
+  .hero-content{position:relative;z-index:2;margin-left:80px;width:760px;display:flex;flex-direction:column;gap:24px}
+  .hero h1{font-size:72px;line-height:1.05;font-weight:700;color:#fff}
+  .hero-sub{max-width:620px;color:var(--cream);font-size:18px;font-weight:300;line-height:1.5}
+  .hero-offer{color:var(--gold);font-size:18px;font-weight:600}
+  .hero .btn{align-self:flex-start}
+  .float-sparkle{position:absolute;pointer-events:none}
+  .fs1{top:160px;left:1080px;width:54px;height:54px;opacity:.9}
+  .fs2{top:360px;left:1240px;width:30px;height:30px;opacity:.7}
+  .fs3{top:540px;left:1160px;width:20px;height:20px;opacity:.55}
+
+  /* load stagger */
+  .fade-in{opacity:0;transform:translateY(16px);animation:fadeUp .8s var(--ease) forwards}
+  .a1{animation-delay:.15s}.a2{animation-delay:.3s}.a3{animation-delay:.45s}.a4{animation-delay:.6s}.a5{animation-delay:.75s}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+  /* ---------- offer ---------- */
+  .offer-section{display:flex;justify-content:center;padding:80px}
+  .offer-panel{position:relative;overflow:hidden;width:1100px;max-width:100%;border-radius:20px;padding:48px 56px;
+    background:#0a3f3d;border:1px solid rgba(255,255,255,0.15);
+    display:flex;align-items:center;justify-content:space-between;gap:48px}
+  .offer-panel .px-img{z-index:0}
+  .offer-left,.price-col{position:relative;z-index:1}
+  .offer-left{width:560px;display:flex;flex-direction:column;gap:16px}
+  .offer-left h2{font-size:44px;line-height:1.1;color:#fff;font-weight:600}
+  .offer-feature{color:var(--cream);font-size:17px;font-weight:300;line-height:1.5}
+  .price-col{display:flex;flex-direction:column;gap:18px}
+  .price-block{width:280px;border-radius:20px;background:rgba(8,57,55,0.3);border:1px solid rgba(206,161,113,0.35);
+    padding:18px 24px;display:flex;flex-direction:column;gap:4px;cursor:pointer;text-decoration:none;
+    transition:transform var(--t-base) var(--ease),box-shadow var(--t-base) var(--ease),border-color var(--t-base) var(--ease),background var(--t-base) var(--ease)}
+  .price-block:hover{transform:translateY(-6px);border-color:var(--gold);background:var(--gold);box-shadow:0 16px 36px rgba(0,0,0,0.3)}
+  .price-block:hover .price-tier{color:#083937}
+  .price-block:hover .price-amt{color:#083937}
+  .price-block:hover .price-per{color:rgba(8,57,55,0.75)}
+  .price-tier,.price-amt,.price-per{transition:color var(--t-base) var(--ease)}
+  .price-tier{color:var(--cream);font-size:14px;font-weight:500;letter-spacing:1px}
+  .price-row{display:flex;align-items:flex-end;gap:8px}
+  .price-amt{color:var(--gold);font-size:40px;font-weight:600}
+  .price-per{color:var(--cream);font-size:15px;font-weight:300}
+
+  /* ---------- areas ---------- */
+  .areas{display:flex;flex-direction:column;align-items:center;gap:40px;padding:80px 80px 90px}
+  .areas-head{width:1100px;max-width:100%;display:flex;flex-direction:column;gap:14px}
+  .areas-head h2{font-size:48px;line-height:1.1;color:#fff;font-weight:600}
+  .areas-row{width:1100px;max-width:100%;display:flex;align-items:flex-end;gap:28px}
+  .area-card{flex:1;border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;
+    transition:transform var(--t-base) var(--ease),box-shadow var(--t-base) var(--ease),border-color var(--t-base) var(--ease)}
+  .area-card:hover{transform:translateY(-6px);border-color:rgba(206,161,113,0.55);box-shadow:0 16px 36px rgba(0,0,0,0.28)}
+  .area-card .ph{overflow:hidden}
+  .area-card img{width:100%;object-fit:cover;transition:transform .6s var(--ease)}
+  .area-card:hover img{transform:scale(1.06)}
+  .area-cap{padding:22px 24px;display:flex;flex-direction:column;gap:10px}
+  .cap-row{display:flex;align-items:center;gap:10px}
+  .cap-label{color:var(--gold);font-size:20px;font-weight:600}
+  .gold-rule{width:54px;height:2px;background:var(--gold);transition:width var(--t-base) var(--ease)}
+  .area-card:hover .gold-rule{width:96px}
+
+  /* ---------- letybo divider ---------- */
+  .divider-strip{background:url('images/Green-BG-pattern-2.jpg') center/cover;height:220px;
+    padding:40px 72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+  .sparkle-row{display:flex;align-items:center;justify-content:center;gap:18px}
+  .divider-strip p{color:#fff;font-size:30px;line-height:1.2;text-align:center;max-width:820px}
+
+  /* ---------- letybo showcase ---------- */
+  .showcase{background:var(--cream);padding:100px 72px;display:flex;align-items:center;gap:72px}
+  .showcase-img-wrap{position:relative;flex:0 0 520px;width:520px;height:620px;border-radius:20px;overflow:hidden}
+  /* scroll-linked parallax-zoom frame: oversized image clipped by the holder */
+  .px-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform;transform:scale(1.5)}
+  .showcase-content{flex:1;display:flex;flex-direction:column;gap:24px}
+  .letybo-logo{height:28px;width:auto;object-fit:contain;align-self:flex-start}
+  .showcase-content h2{color:var(--brown);font-size:44px;line-height:1.1;font-weight:600}
+  .showcase-body{color:var(--gray);font-size:16px;font-weight:300;line-height:1.5}
+  .stat-stack{display:flex;flex-direction:column}
+  .stat{display:flex;align-items:center;gap:20px;padding:18px 0;border-top:1px solid var(--gold);
+    transition:padding-left var(--t-base) var(--ease)}
+  .stat:first-child{border-top:none}
+  .stat:hover{padding-left:10px}
+  .stat-val{width:120px;flex:0 0 120px;color:var(--green);font-size:36px;font-weight:600;transition:transform var(--t-base) var(--ease);transform-origin:left center}
+  .stat:hover .stat-val{transform:scale(1.08)}
+  .stat-label{color:var(--brown);font-size:15px;line-height:1.4;transition:color var(--t-base) ease-out}
+  .stat:hover .stat-label{color:var(--green)}
+
+  /* ---------- benefits ---------- */
+  .benefits{background:var(--green-2) url('images/Green-BG-3.jpg') center/cover;display:flex;flex-direction:column;align-items:center;gap:40px;padding:80px}
+  .benefits-inner{position:relative;width:1100px;max-width:100%}
+  .benefits-cta{display:flex;justify-content:center;width:1100px;max-width:100%}
+  .benefits-img{position:relative;width:100%;height:760px;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.25)}
+  .benefits-img img{width:100%;height:100%;object-fit:cover}
+  .benefits-panel{position:absolute;left:48px;top:50%;transform:translateY(-50%);width:480px;max-width:calc(100% - 96px);
+    border-radius:20px;background:rgba(8,57,55,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,0.18);padding:44px 46px;display:flex;flex-direction:column;gap:28px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.35)}
+  .benefits-head{display:flex;flex-direction:column;gap:12px}
+  .benefits-head h2{color:#fff;font-size:32px;line-height:1.1;font-weight:400}
+  .benefits-list{display:flex;flex-direction:column}
+  .benefit-row{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.18);
+    transition:padding-left var(--t-base) var(--ease)}
+  .benefit-row:last-child{border-bottom:none}
+  .benefit-row:hover{padding-left:8px}
+  .benefit-row .sparkle{transition:transform var(--t-base) var(--ease)}
+  .benefit-row:hover .sparkle{transform:rotate(90deg) scale(1.15)}
+  .benefit-row p{color:#fff;font-size:17px;line-height:1.5;transition:color var(--t-base) ease-out}
+  .benefit-row:hover p{color:var(--gold)}
+
+  /* ---------- reviews ---------- */
+  .reviews{background:#fff;display:flex;flex-direction:column;align-items:center;gap:36px;padding:80px 64px}
+  .reviews-head{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .reviews-head .eyebrow{color:var(--rust)}
+  .reviews-head h2{color:var(--brown);font-size:48px;font-weight:600}
+  .reviews-row{width:100%;display:flex;gap:24px}
+  .review-card{flex:1;height:412px;border-radius:20px;overflow:hidden;box-shadow:0 5px 30px rgba(0,0,0,0.17)}
+  .review-card img{width:100%;height:100%;object-fit:cover}
+
+  /* ---------- doctor ---------- */
+  .doctor{background:url('images/Green-BG-2.jpg') center/cover;display:flex;justify-content:center;padding:90px 80px}
+  .doctor-inner{width:1100px;max-width:100%;display:flex;align-items:center;gap:64px}
+  .doctor-portrait{position:relative;flex:0 0 420px;width:420px;height:520px}
+  .doctor-photo{width:420px;height:520px;border-radius:20px;overflow:hidden;box-shadow:0 10px 44px rgba(0,0,0,0.35)}
+  .doctor-photo img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+  .doctor-photo:hover img{transform:scale(1.08)}
+  .doctor-portrait .sparkle{position:absolute;top:-22px;left:-22px;width:44px;height:44px;z-index:2}
+  .doctor-text{flex:1;display:flex;flex-direction:column;gap:20px}
+  .doctor-text h2{color:#fff;font-size:42px;font-weight:600}
+  .doctor-cred{color:var(--gold);font-size:17px;font-weight:500;line-height:1.4}
+  .doctor-bio{color:var(--cream);font-size:17px;font-weight:300;line-height:1.55}
+  .doc-creds{list-style:none;display:flex;flex-direction:column;gap:2px;margin-top:4px}
+  .doc-cred-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.14);
+    transition:padding-left var(--t-base) var(--ease)}
+  .doc-cred-row:last-child{border-bottom:none}
+  .doc-cred-row:hover{padding-left:8px}
+  .doc-cred-row span{color:var(--cream);font-size:15px;line-height:1.45;transition:color var(--t-base) ease-out}
+  .doc-cred-row:hover span{color:var(--gold)}
+  .doc-cred-row .sparkle{transition:transform var(--t-base) var(--ease)}
+  .doc-cred-row:hover .sparkle{transform:rotate(90deg)}
+  .signature{align-self:flex-start;margin-top:6px}
+  .signature img{height:64px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.9}
+
+  /* ---------- form ---------- */
+  .form-section{display:flex;justify-content:center;padding:90px 80px}
+  .form-inner{width:1100px;max-width:100%;display:flex;gap:48px;align-items:stretch}
+  .form-col{flex:0 0 640px;width:640px;border-radius:20px;background:var(--beige);
+    border:1px solid rgba(206,161,113,0.35);padding:44px;box-shadow:0 10px 44px rgba(0,0,0,0.35);
+    display:flex;flex-direction:column;gap:24px}
+  .form-col .eyebrow{color:var(--rust)}
+  .form-col h2{color:var(--brown);font-size:40px;font-weight:600}
+  .form-grid{display:flex;gap:18px}
+  .field{display:flex;flex-direction:column;gap:8px;flex:1}
+  .field label{color:var(--brown);font-size:14px;font-weight:500}
+  .field input,.field textarea{font-family:'Roboto',sans-serif;font-size:15px;font-weight:300;color:var(--brown);
+    background:#fff;border:1px solid #D8CFC5;border-radius:10px;padding:14px 16px;outline:none;width:100%;
+    transition:border-color var(--t-base) ease-out, box-shadow var(--t-base) ease-out}
+  .field input::placeholder,.field textarea::placeholder{color:var(--placeholder)}
+  .field input:focus,.field textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(8,57,55,0.1)}
+  .field textarea{height:110px;resize:vertical}
+  .map-col{flex:1;display:flex;flex-direction:column;gap:24px}
+  .map-panel{flex:0 0 240px;height:240px;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,0.15);position:relative}
+  .map-panel iframe{width:100%;height:100%;border:0;display:block;filter:saturate(0.9)}
+  .address-panel{flex:1;border-radius:20px;background:var(--green-3);border:1px solid rgba(255,255,255,0.15);
+    padding:28px;display:flex;flex-direction:column;gap:18px;justify-content:center}
+  .address-label{color:var(--gold);font-size:14px;font-weight:600;letter-spacing:2px}
+  .info-row{display:flex;flex-direction:column;gap:4px}
+  .info-row .k{color:var(--gold);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase}
+  .address-text{color:#fff;font-size:17px;line-height:1.5;white-space:pre-line}
+  .info-val{color:#fff;font-size:16px;line-height:1.5}
+  .info-val a{color:#fff;transition:color var(--t-base) ease-out}
+  .info-val a:hover{color:var(--gold)}
+
+  /* ---------- footer ---------- */
+  .footer{background:var(--green);padding:64px;display:flex;flex-direction:column;gap:40px}
+  .footer-top{display:flex;justify-content:space-between;gap:48px}
+  .footer-left{width:380px;display:flex;flex-direction:column;gap:20px}
+  .footer-left img{width:220px;height:auto;object-fit:contain;filter:brightness(0) invert(1);
+    transition:filter var(--t-base) ease}
+  .footer-left img:hover{filter:brightness(0) invert(1) drop-shadow(0 0 12px rgba(255,255,255,0.7))}
+  .footer-address{color:rgba(255,255,255,0.82);font-size:16px;font-weight:300;line-height:1.6;white-space:pre-line}
+  .footer-col{width:240px;display:flex;flex-direction:column;gap:14px}
+  .footer-head{color:var(--gold);font-size:13px;font-weight:600;letter-spacing:3px}
+  .footer-col a{color:rgba(255,255,255,0.82);font-size:16px;font-weight:300;transition:color var(--t-base) ease-out}
+  .footer-col a:hover{color:#fff}
+  .footer-divider{height:1px;background:rgba(206,161,113,0.25)}
+  .copyright{color:rgba(255,255,255,0.6);font-size:14px;font-weight:300}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1180px){
+    .header{padding:16px 40px}
+    .hero-content{margin-left:40px;margin-right:40px;width:auto}
+    .offer-section,.areas,.benefits,.doctor,.form-section{padding-left:40px;padding-right:40px}
+    .offer-panel{flex-direction:column;align-items:flex-start;width:100%}
+    .offer-left{width:100%}
+    .price-col{flex-direction:row;width:100%}
+    .price-block{flex:1;width:auto}
+    .benefits-img{height:600px}
+    .benefits-panel{left:32px;width:440px}
+    .doctor-inner{flex-direction:column;align-items:flex-start}
+    .form-inner{flex-direction:column}
+    .form-col{flex:0 0 auto;width:100%}
+    .showcase{padding:80px 40px}
+  }
+  @media (max-width:820px){
+    .header{padding:12px 20px}
+    .header-phone{display:none}
+    .hero{min-height:auto}
+    .hero-content{margin-left:0;margin-right:0;width:100%;padding:120px 20px 80px}
+    .hero h1{font-size:44px}
+    .float-sparkle{display:none}
+    .offer-section,.areas,.benefits,.doctor,.form-section,.reviews{padding-left:20px;padding-right:20px}
+    .areas{padding-top:60px;padding-bottom:60px}
+    .areas-head h2{font-size:34px}
+    .areas-row{flex-direction:column;align-items:stretch}
+    .area-card img{height:auto}
+    .offer-left h2{font-size:34px}
+    .price-col{flex-direction:column}
+    .price-block{width:100%}
+    .showcase{flex-direction:column;padding:60px 20px;gap:40px}
+    .showcase-img-wrap{flex:0 0 auto;width:100%;height:480px}
+    .showcase-content h2{font-size:34px}
+    .benefits{padding:60px 20px}
+    .benefits-img{height:340px}
+    .benefits-panel{position:static;transform:none;left:auto;top:auto;width:100%;max-width:100%;margin-top:16px;padding:32px 24px}
+    .reviews-row{flex-direction:column}
+    .review-card{height:auto;min-height:360px}
+    .reviews-head h2{font-size:34px}
+    .doctor{padding:60px 20px}
+    .doctor-portrait{flex:0 0 auto;width:100%;max-width:420px;height:auto}
+    .doctor-photo{width:100%;height:auto}
+    .doctor-photo img{height:auto}
+    .doctor-text h2{font-size:32px}
+    .form-section{padding:60px 20px}
+    .form-col{padding:28px}
+    .form-grid{flex-direction:column}
+    .footer{padding:40px 24px}
+    .footer-top{flex-direction:column;gap:32px}
+    .footer-left,.footer-col{width:100%}
+    .divider-strip{padding:40px 24px}
+    .divider-strip p{font-size:22px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <a href="#" class="logo"><img src="images/logo3.png" alt="Dermagnify"></a>
+    <div class="header-right">
+      <a href="tel:9046867771" class="header-phone">(904) 686-7771</a>
+      <a href="#request" class="btn btn-teal"><span>Request Appointment</span></a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img class="hero-img" src="images/hero2.jpg" alt="">
+    <div class="hero-scrim"></div>
+    <svg class="float-sparkle fs1 sparkle" data-parallax="0.12" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+    <svg class="float-sparkle fs2 sparkle" data-parallax="0.2" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+    <svg class="float-sparkle fs3 sparkle" data-parallax="0.28" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+    <div class="hero-content">
+      <div class="eyebrow-row fade-in a1">
+        <svg class="sparkle" width="20" height="20" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+        <span class="eyebrow">Dermagnify Face Refresh</span>
+      </div>
+      <h1 class="playfair fade-in a2">Bring a Friend. Refresh Together.</h1>
+      <p class="hero-sub fade-in a3">Share a luxury upper-face refresh side by side. Two patients, one appointment block, results you'll both love.</p>
+      <p class="hero-offer fade-in a4">Full Upper Face Refresh - from $500 per person</p>
+      <a href="#request" class="btn btn-gold fade-in a5"><span>Request Appointment</span></a>
+    </div>
+  </section>
+
+  <!-- OFFER -->
+  <section class="offer-section">
+    <div class="offer-panel">
+      <img class="px-img" src="images/Green-BG-2.jpg" alt="">
+      <div class="offer-left">
+        <h2 class="playfair">Full Upper Face Refresh</h2>
+        <p class="offer-feature">Featuring Letybo, the newest FDA-approved wrinkle relaxer.</p>
+      </div>
+      <div class="price-col">
+        <a class="price-block" href="#request">
+          <span class="price-tier">DERMAGNIFY VIP MEMBER PRICE</span>
+          <div class="price-row"><span class="price-amt playfair">$500</span><span class="price-per">per person</span></div>
+        </a>
+        <a class="price-block" href="#request">
+          <span class="price-tier">NON-MEMBER PRICE</span>
+          <div class="price-row"><span class="price-amt playfair">$600</span><span class="price-per">per person</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section class="areas">
+    <div class="areas-head">
+      <div class="eyebrow-row">
+        <svg class="sparkle" width="18" height="18" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+        <span class="eyebrow">What's Treated</span>
+      </div>
+      <h2 class="playfair">Includes all three upper-face areas</h2>
+    </div>
+    <div class="areas-row">
+      <div class="area-card">
+        <div class="ph"><img src="images/forehead-lines.jpg" alt="Forehead Lines" style="height:440px"></div>
+        <div class="area-cap">
+          <div class="cap-row">
+            <svg class="sparkle" width="16" height="16" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <span class="cap-label">Forehead Lines</span>
+          </div>
+          <div class="gold-rule"></div>
+        </div>
+      </div>
+      <div class="area-card">
+        <div class="ph"><img src="images/frown-lines.jpg" alt="Frown Lines" style="height:360px"></div>
+        <div class="area-cap">
+          <div class="cap-row">
+            <svg class="sparkle" width="16" height="16" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <span class="cap-label">Frown Lines (11s)</span>
+          </div>
+          <div class="gold-rule"></div>
+        </div>
+      </div>
+      <div class="area-card">
+        <div class="ph"><img src="images/crows-feet.jpg" alt="Crow's Feet" style="height:400px"></div>
+        <div class="area-cap">
+          <div class="cap-row">
+            <svg class="sparkle" width="16" height="16" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <span class="cap-label">Crow's Feet</span>
+          </div>
+          <div class="gold-rule"></div>
+        </div>
+      </div>
+    </div>
+    <div class="areas-cta"><a href="#request" class="btn btn-gold"><span>Request Appointment</span></a></div>
+  </section>
+
+  <!-- LETYBO DIVIDER -->
+  <section class="divider-strip">
+    <div class="sparkle-row">
+      <svg class="sparkle" width="12" height="12" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+      <svg class="sparkle" width="20" height="20" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+      <svg class="sparkle" width="12" height="12" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+    </div>
+    <p class="playfair">Featuring Letybo, the newest FDA-approved wrinkle relaxer.</p>
+  </section>
+
+  <!-- LETYBO SHOWCASE -->
+  <section class="showcase">
+    <div class="showcase-img-wrap"><img class="px-img" src="images/letybo4.jpg" alt="Letybo"></div>
+    <div class="showcase-content">
+      <img class="letybo-logo" src="images/letybo-logo.avif" alt="Letybo">
+      <h2 class="playfair">A modern neurotoxin, trusted worldwide.</h2>
+      <p class="showcase-body">Letybo is the newest FDA-approved injectable neurotoxin, approved for moderate-to-severe frown lines. Quick and comfortable - a 10-20 minute treatment with no downtime, comparable to Botox, with results that last 3-4 months.</p>
+      <div class="stat-stack">
+        <div class="stat"><span class="stat-val playfair" data-count="1" data-prefix="#">#1</span><span class="stat-label">Bestselling neuromodulator in South Korea</span></div>
+        <div class="stat"><span class="stat-val playfair" data-count="65" data-suffix="+">65+</span><span class="stat-label">Countries where Letybo is approved</span></div>
+        <div class="stat"><span class="stat-val playfair" data-count="31" data-suffix="M+">31M+</span><span class="stat-label">Vials sold worldwide</span></div>
+        <div class="stat"><span class="stat-val playfair" data-count="4" data-prefix="3-" data-suffix=" mo">3-4 mo</span><span class="stat-label">How long results typically last</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <section class="benefits">
+    <div class="benefits-inner">
+      <div class="benefits-img"><img src="images/treatment.jpg" alt="Treatment"></div>
+      <div class="benefits-panel">
+        <div class="benefits-head">
+          <div class="eyebrow-row">
+            <svg class="sparkle" width="18" height="18" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <span class="eyebrow">Why Dermagnify</span>
+          </div>
+          <h2 class="playfair">The details that make the difference</h2>
+        </div>
+        <div class="benefits-list">
+          <div class="benefit-row">
+            <svg class="sparkle" width="16" height="16" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <p>Physician-directed treatment</p>
+          </div>
+          <div class="benefit-row">
+            <svg class="sparkle" width="16" height="16" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <p>Personalized treatment planning</p>
+          </div>
+          <div class="benefit-row">
+            <svg class="sparkle" width="16" height="16" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <p>Beauty Bank funds may be applied by Dermagnify VIP Members</p>
+          </div>
+          <div class="benefit-row">
+            <svg class="sparkle" width="16" height="16" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <p>Both patients must be treated during the same appointment block</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="benefits-cta"><a href="#request" class="btn btn-gold"><span>Request Appointment</span></a></div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews">
+    <div class="reviews-head">
+      <div class="eyebrow-row">
+        <svg class="sparkle" width="16" height="16" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+        <span class="eyebrow">What Patients Say</span>
+      </div>
+      <h2 class="playfair">Reviews from Google</h2>
+    </div>
+    <div class="reviews-row">
+      <div class="review-card"><img src="images/Carolina.png" alt="Patient review"></div>
+      <div class="review-card"><img src="images/Debra.png" alt="Patient review"></div>
+      <div class="review-card"><img src="images/Irene.png" alt="Patient review"></div>
+    </div>
+    <div class="reviews-cta"><a href="#request" class="btn btn-green" style="width:auto;padding:16px 36px"><span>Request Appointment</span></a></div>
+  </section>
+
+  <!-- DOCTOR -->
+  <section class="doctor">
+    <div class="doctor-inner">
+      <div class="doctor-portrait">
+        <div class="doctor-photo"><img src="images/doctor.jpg" alt="Dr. Mark A. Cappel"></div>
+        <svg class="sparkle" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+      </div>
+      <div class="doctor-text">
+        <div class="eyebrow-row">
+          <svg class="sparkle" width="18" height="18" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+          <span class="eyebrow">Your Physician</span>
+        </div>
+        <h2 class="playfair">Dr. Mark A. Cappel, MD</h2>
+        <p class="doctor-cred">Founder &amp; Medical Director · Double board-certified in dermatology &amp; dermatopathology</p>
+        <p class="doctor-bio">Dr. Cappel brings a comprehensive, physician-led approach to medical, surgical, and cosmetic dermatology, pairing clinical expertise with advanced diagnostic precision. His dual board certification lets him correlate clinical findings with microscopic analysis for highly accurate diagnoses and targeted, evidence-based treatment.</p>
+        <ul class="doc-creds">
+          <li class="doc-cred-row">
+            <svg class="sparkle" width="14" height="14" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <span>MD, Pennsylvania State College of Medicine - Alpha Omega Alpha honors</span>
+          </li>
+          <li class="doc-cred-row">
+            <svg class="sparkle" width="14" height="14" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <span>Dermatology residency at Mayo Clinic, Jacksonville</span>
+          </li>
+          <li class="doc-cred-row">
+            <svg class="sparkle" width="14" height="14" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <span>Dermatopathology fellowship at Mayo Clinic, Rochester</span>
+          </li>
+          <li class="doc-cred-row">
+            <svg class="sparkle" width="14" height="14" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+            <span>Nine years as Mayo Clinic staff physician · 45+ peer-reviewed publications</span>
+          </li>
+        </ul>
+        <div class="signature"><img src="images/dr-signature.svg" alt="Dr. Cappel signature"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <section class="form-section" id="request">
+    <div class="form-inner">
+      <form class="form-col" onsubmit="return false">
+        <div class="eyebrow-row">
+          <svg class="sparkle" width="18" height="18" viewBox="0 0 100 100"><path d="M50 0C54 32 68 46 100 50C68 54 54 68 50 100C46 68 32 54 0 50C32 46 46 32 50 0Z"/></svg>
+          <span class="eyebrow">Get Started</span>
+        </div>
+        <h2 class="playfair">Request Appointment</h2>
+        <div class="form-grid">
+          <div class="field"><label>First Name</label><input type="text" placeholder="First name"></div>
+          <div class="field"><label>Last Name</label><input type="text" placeholder="Last name"></div>
+        </div>
+        <div class="form-grid">
+          <div class="field"><label>Phone Number</label><input type="tel" placeholder="(904) 000-0000"></div>
+          <div class="field"><label>Email</label><input type="email" placeholder="you@email.com"></div>
+        </div>
+        <div class="field"><label>Message</label><textarea placeholder="Tell us about your goals"></textarea></div>
+        <button class="btn btn-green"><span>Request Appointment</span></button>
+      </form>
+      <div class="map-col">
+        <div class="map-panel">
+          <iframe
+            src="https://www.google.com/maps?q=100%20Executive%20Way%20Suite%20114%2C%20Ponte%20Vedra%20Beach%2C%20FL%2032082&output=embed"
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Dermagnify clinic location"></iframe>
+        </div>
+        <div class="address-panel">
+          <span class="address-label">VISIT US</span>
+          <div class="info-row"><span class="k">Address</span><p class="address-text">100 Executive Way, Suite 114
+Ponte Vedra Beach, FL 32082</p></div>
+          <div class="info-row"><span class="k">Phone</span><span class="info-val"><a href="tel:9046867771">(904) 686-7771</a></span></div>
+          <div class="info-row"><span class="k">Working Hours</span><span class="info-val">Monday - Friday: 8:30 AM - 3:30 PM</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-left">
+        <img src="images/logo4.png" alt="Dermagnify">
+        <p class="footer-address">100 Executive Way, Suite 114
+Ponte Vedra Beach, FL 32082</p>
+      </div>
+      <div class="footer-col">
+        <span class="footer-head">CONTACT</span>
+        <a href="tel:9046867771">(904) 686-7771</a>
+        <a href="mailto:info@dermagnify.com">info@dermagnify.com</a>
+      </div>
+      <div class="footer-col">
+        <span class="footer-head">FOLLOW</span>
+        <a href="https://facebook.com/Dermagnify" target="_blank" rel="noopener">facebook.com/Dermagnify</a>
+        <a href="https://instagram.com/Dermagnify" target="_blank" rel="noopener">instagram.com/Dermagnify</a>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <p class="copyright">&copy; 2026 Dermagnify. All rights reserved.</p>
+  </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+(function(){
+  // Core scroll/animation setup runs first and unconditionally.
+  var lenis=null;
+
+  // Sticky header state (white on scroll + hide-on-down / reveal-on-up)
+  var header=document.getElementById('header');
+  var lastY=0;
+  function readY(){ return window.scrollY||window.pageYOffset||0; }
+  function updateHeader(y){
+    // Header stays put and transparent; only a faint shadow appears once scrolled.
+    if(y>40) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+  }
+  // Cache parallax targets
+  var pxEls=[].slice.call(document.querySelectorAll('[data-parallax]'));
+  var bgEls=[].slice.call(document.querySelectorAll('[data-bg-parallax]'));
+  function updateParallax(){
+    var vh=window.innerHeight;
+    pxEls.forEach(function(el){
+      var r=el.getBoundingClientRect();
+      var off=((r.top+r.height/2)-vh/2)/vh; // -1..1 across viewport
+      var amt=parseFloat(el.getAttribute('data-parallax'))*100;
+      el.style.transform='translate3d(0,'+(-off*amt).toFixed(1)+'px,0)';
+    });
+    bgEls.forEach(function(el){
+      var r=el.getBoundingClientRect();
+      var off=((r.top+r.height/2)-vh/2)/vh;
+      var amt=parseFloat(el.getAttribute('data-bg-parallax'))*100;
+      el.style.backgroundPosition='center calc(50% + '+(-off*amt).toFixed(1)+'px)';
+    });
+  }
+  // Scroll-linked parallax-zoom for full-bleed images (norydentistry-style):
+  // oversized image scales 1.5 -> 1.0 and drifts vertically as it crosses the viewport.
+  var reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var pxImgs=[].slice.call(document.querySelectorAll('.px-img'));
+  if(reduceMotion){ pxImgs.forEach(function(img){ img.style.transform='scale(1)'; }); }
+  function updateZoom(){
+    if(reduceMotion) return;
+    var vh=window.innerHeight;
+    pxImgs.forEach(function(img){
+      var holder=img.parentElement, r=holder.getBoundingClientRect();
+      if(r.bottom<0 || r.top>vh) return; // skip when fully off-screen
+      var p=(vh-r.top)/(vh+r.height); p=p<0?0:(p>1?1:p); // 0 entering bottom, 1 leaving top
+      var s0=parseFloat(img.getAttribute('data-scale-start'))||1.5;
+      var s1=parseFloat(img.getAttribute('data-scale-end'))||1.0;
+      var pct=parseFloat(img.getAttribute('data-parallax-pct'))||8;
+      var s=s0+(s1-s0)*p;
+      var ty=(p-0.5)*2*(pct/100)*r.height; // -pct% .. +pct% of holder height
+      img.style.transform='translate3d(0,'+ty.toFixed(1)+'px,0) scale3d('+s.toFixed(3)+','+s.toFixed(3)+',1)';
+    });
+  }
+  // Header reacts to native scroll events
+  window.addEventListener('scroll',function(){ updateHeader(readY()); },{passive:true});
+  // Parallax + zoom run every frame, tracking scroll regardless of any library
+  function tick(){ try{ updateParallax(); updateZoom(); }catch(e){} requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+  updateHeader(readY());
+
+  // Count-up animation for stat numbers on scroll into view
+  function animateCounts(){
+    document.querySelectorAll('.stat-val[data-count]').forEach(function(el){
+      var target=parseFloat(el.getAttribute('data-count'));
+      var pre=el.getAttribute('data-prefix')||'';
+      var suf=el.getAttribute('data-suffix')||'';
+      var dur=1300,start=null;
+      function step(ts){if(!start)start=ts;var p=Math.min((ts-start)/dur,1);
+        var val=Math.round(target*(1-Math.pow(1-p,3)));
+        el.textContent=pre+val+suf;if(p<1)requestAnimationFrame(step);}
+      requestAnimationFrame(step);
+    });
+  }
+  var statStack=document.querySelector('.stat-stack');
+  if(statStack && 'IntersectionObserver' in window){
+    var counted=false;
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting && !counted){counted=true;animateCounts();io.disconnect();}});
+    },{threshold:0.4});
+    io.observe(statStack);
+  } else { animateCounts(); }
+
+  // Optional Lenis smooth scroll - guarded so any failure can't break the page
+  try{
+    var L=window.Lenis?(window.Lenis.default||window.Lenis):null;
+    if(typeof L==='function' && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+      lenis=new L({lerp:0.1,wheelMultiplier:1});
+      var raf=function(t){lenis.raf(t);requestAnimationFrame(raf);}; requestAnimationFrame(raf);
+      lenis.on('scroll',function(e){ updateHeader((e&&e.scroll!=null)?e.scroll:readY()); });
+    }
+  }catch(err){ lenis=null; }
+
+  // Smooth anchor scrolling
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var id=a.getAttribute('href'); if(id.length<2)return;
+      var t=document.querySelector(id); if(!t)return; e.preventDefault();
+      if(lenis) lenis.scrollTo(t,{offset:-90}); else t.scrollIntoView({behavior:'smooth'});
+    });
+  });
+})();
+</script>
+</body>
+</html>
